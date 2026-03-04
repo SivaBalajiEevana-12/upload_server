@@ -100,20 +100,35 @@ app.put("/attendance/:mobile", async (req, res) => {
     const donor = await Donor.findOne({ mobileNumber: mobile });
 
     if (!donor) {
-      return res.status(404).json({ message: "Mobile number not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Mobile number not found",
+      });
     }
 
     if (donor.attendance) {
-      return res.json({ message: "Attendance already marked" });
+      return res.status(200).json({
+        success: true,
+        message: "Attendance already marked",
+        donor,
+      });
     }
 
     donor.attendance = true;
     await donor.save();
 
-    res.json({ message: "Attendance marked successfully", donor });
+    res.status(200).json({
+      success: true,
+      message: "Attendance marked successfully",
+      donor,
+    });
 
   } catch (error) {
-    res.status(500).json({ message: "Error updating attendance" });
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Error updating attendance",
+    });
   }
 });
 // const PORT = 5000;
